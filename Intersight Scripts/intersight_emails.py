@@ -42,7 +42,7 @@ def consult_intersight():
     return dict_alerts
 
 
-def send_email(email):
+def send_email(email_receiver,email_sender):
 
     dictionary_body = consult_intersight()
     warning_alerts,info_alerts,critical_alerts = 0,0,0
@@ -74,7 +74,7 @@ def send_email(email):
     """.format(critical_alerts,warning_alerts,info_alerts)
     
     body = alerts_total+alerts_singular
-    receiver = email
+    receiver = email_receiver
 
     html = """\
     <html>
@@ -85,7 +85,7 @@ def send_email(email):
     </html>
     """.format(body)
 
-    yag = yagmail.SMTP(user="ciscostorageuniversity@gmail.com",password="C1sc012345")
+    yag = yagmail.SMTP(user=str(email_sender[0]),password=str(email_sender[1]))
     yag.send(
         to=receiver,
         subject="Alerts Intersight Storage University",
@@ -93,8 +93,9 @@ def send_email(email):
     )
 
 def main():
-    email = sys.argv[1:]
-    send_email(email)
+    email_receiver = sys.argv[4:]
+    email_sender = sys.argv[1:3]
+    send_email(email_receiver,email_sender)
     
 if __name__ == "__main__":
     main()
