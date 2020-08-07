@@ -93,7 +93,7 @@ def send_email(email_receiver,email_sender):
     )
 
 def main():
-    email_receiver = sys.argv[4:]
+    email_receiver = sys.argv[3:]
     email_sender = sys.argv[1:3]
     send_email(email_receiver,email_sender)
     
