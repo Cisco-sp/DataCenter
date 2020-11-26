@@ -15,6 +15,7 @@ provider mso {
 provider vsphere {
     user = var.vsphere_username
     password = var.vsphere_password
+    vsphere_server = var.vsphere_url
 }
 
 data "vsphere_datacenter" "datacenter" {

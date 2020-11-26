@@ -27,7 +27,11 @@ variable vsphere_cluster_name {
 }
 
 variable vsphere_datastore_name {
-    
+
+}
+
+variable vsphere_url {
+
 }
 
 variable vsphere_username {
