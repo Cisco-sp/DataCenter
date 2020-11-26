@@ -4,6 +4,24 @@ provider aws {
     profile = "default"
 }
 
+resource "aws_key_pair" "deployer" {
+  key_name   = "itau_terraform_test_key"
+  public_key = file()
+}
+
+resource "aws_instance" "myfirst_instance" {
+    ami = "ami-0c3c87b7d583d618f"
+    vpc_security_group_ids = [aws_security_group.allow_all_sg.id]
+    key_name = aws_key_pair.deployer.key_name
+    subnet_id = aws_subnet.heprado_subnet.id
+    associate_public_ip_address = true
+    instance_type = "t3.micro"
+    tags = {
+        Name = "ITAU_Cloud-HOST1"
+    }
+}
+
+
 
 provider mso {
     username = var.mso_username
@@ -43,7 +61,7 @@ data "vsphere_virtual_machine" "template" {
 }
 
 resource "vsphere_virtual_machine" "vm" {
-  name             = "Itau-Teste"
+  name             = "Itau_Cloud-HOST2"
   compute_cluster =  data.vsphere_compute_cluster.compute_cluster.id
   datastore_id     = data.vsphere_datastore.datastore.id}
 
@@ -51,7 +69,7 @@ resource "vsphere_virtual_machine" "vm" {
   memory   = 4096
   guest_id = data.vsphere_virtual_machine.template.guest_id
 
-  scsi_type = "${data.vsphere_virtual_machine.template.scsi_type}"
+  scsi_type = data.vsphere_virtual_machine.template.scsi_type
 
   network_interface {
     network_id   = data.vsphere_network.network.id
