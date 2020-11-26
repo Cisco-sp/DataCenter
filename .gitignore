@@ -6,7 +6,7 @@ __pycache__/
 *.exe
 *.tfvars
 *_credentials
-
+versions.tf
 
 # C extensions
 *.so
