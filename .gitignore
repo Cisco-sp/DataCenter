@@ -4,7 +4,6 @@ __pycache__/
 *$py.class
 .terraform/
 *.exe
-*.tfvars
 *_credentials
 versions.tf
 
