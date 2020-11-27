@@ -9,7 +9,7 @@ resource "aws_key_pair" "deployer" {
   public_key = file()
 }
 
-resource "aws_instance" "myfirst_instance" {
+resource "aws_instance" "itau_instance" {
     ami = "ami-0c3c87b7d583d618f"
     vpc_security_group_ids = [aws_security_group.allow_all_sg.id]
     key_name = aws_key_pair.deployer.key_name
@@ -22,11 +22,60 @@ resource "aws_instance" "myfirst_instance" {
 }
 
 
+provider aci {
+    username = var.capic_username
+    password = var.capic_password
+    url = var.capic_url
+}
 
-provider mso {
-    username = var.mso_username
-    password = var.mso_password
-    url = var.mso_url
+data "aci_tenant" "cisco_tenant" {
+  name  = "CISCO1"
+}
+
+resource "aci_vrf" "cisco_vrf" {
+  tenant_dn              = aci_tenant.cisco_tenant.id
+  name                   = "cisco_dev_vrf"
+}
+
+resource "aci_cloud_context_profile" "cisco_ctx_profile" {
+    name                     = "cisco_dev_ctx"
+    description              = "Cisco Context Profile"
+    tenant_dn                = aci_tenant.cisco_tenant.id
+    primary_cidr             = "10.251.0.0/16"
+    region                   = var.aws_region
+    cloud_vendor             = "aws"
+    relation_cloud_rs_to_ctx = aci_vrf.cisco_vrf.id
+}
+
+resource "aci_cloud_subnet" "cisco_subnet1" {
+    cloud_cidr_pool_dn = aci_cloud_cidr_pool.cisco_cidr_pool.id
+    description        = "cisco_dev_subnet1"
+    ip                 = "10.251.1.0/24"
+    name_alias         = "cisco_dev_subnet1"
+}
+
+resource "aci_cloud_subnet" "cisco_subnet2" {
+    cloud_cidr_pool_dn = aci_cloud_cidr_pool.cisco_cidr_pool.id
+    description        = "cisco_dev_subnet2"
+    ip                 = "10.251.2.0/24"
+    name_alias         = "cisco_dev_subnet2"
+}
+
+resource "aci_cloud_cidr_pool" "cisco_cidr_pool" {
+    cloud_context_profile_dn = aci_cloud_context_profile.cisco_ctx_profile.id
+    description              = "cloud CIDR"
+    addr                     = "10.251.0.0/16"
+    annotation               = "tag_cidr"
+    name_alias               = "%s"
+    primary                  = "yes"
+}
+
+resource "aci_cloud_providers_region" "foocloud_providers_region" {
+    cloud_provider_profile_dn = "${aci_cloud_provider_profile.example.id}"
+    description               = "aws region"
+    name                      = "us-east-1"
+    annotation                = "tag_region"
+    name_alias                = "default_reg"
 }
 
 
@@ -63,7 +112,7 @@ data "vsphere_virtual_machine" "template" {
 resource "vsphere_virtual_machine" "vm" {
   name             = "Itau_Cloud-HOST2"
   compute_cluster =  data.vsphere_compute_cluster.compute_cluster.id
-  datastore_id     = data.vsphere_datastore.datastore.id}
+  datastore_id     = data.vsphere_datastore.datastore.id
 
   num_cpus = 2
   memory   = 4096

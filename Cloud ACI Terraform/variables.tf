@@ -2,18 +2,18 @@ variable aws_region {
 
 }
 
-variable mso_url {
+variable capic_url {
 
 }
 
 
 
-variable mso_username {
+variable capic_username {
     type = string
     description = "Usúario para acessar o MSO"
 }
 
-variable mso_password {
+variable capic_password {
     type = string
     description = "Senha para acessar o MSO"
 }
