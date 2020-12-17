@@ -8,6 +8,8 @@ __pycache__/
 *_credentials
 versions.tf
 .vscode/
+*.tfstate
+*.tfstate.backup
 
 
 # C extensions
