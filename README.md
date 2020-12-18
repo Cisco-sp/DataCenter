@@ -1,5 +1,4 @@
 # DataCenter
 
--Intersight Scripts
 
-Essa pasta contem um script para puxar todos os alertas do Intersight e mandar para algum email.
+Repósitorio com codigos de automação e orquestração dos produtos de Data Center da Cisco.
