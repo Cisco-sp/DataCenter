@@ -5,9 +5,7 @@ provider aci {
     insecure = "true"
 }
 
-provider vsphere {
 
-}
 
 resource aci_tenant "terraform_tenant" {
     name = "${var.prefix_name}Tenant"
@@ -165,4 +163,138 @@ resource "aci_epg_to_contract" "db_to_app" {
     contract_type = "provider"
 }
 
+####################################################################################################################
 
+
+provider vsphere {
+    user = var.vsphere_user
+    password = var.vsphere_password
+    vsphere_server = var.vsphere_server
+    allow_unverified_ssl = true
+}
+
+data "vsphere_datacenter" "dc" {
+  name = var.vsphere_dc
+}
+data "vsphere_compute_cluster" "cluster" {
+  name = var.vsphere_cluster
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_datastore" "datastore1" {
+  name          = "Storage 2 - 10.97.39.155"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_datastore" "datastore2" {
+  name          = "datastore1"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+
+data "vsphere_host" "host1" {
+  name          = var.vsphere_host1
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_host" "host2" {
+  name          = var.vsphere_host2
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_host" "host3" {
+  name          = var.vsphere_host3
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_host" "host4" {
+  name          = var.vsphere_host4
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_network" "web_port_group" {
+  name          = "${aci_tenant.terraform_tenant.name}|${aci_application_profile.anp.name}|${aci_application_epg.web_epg.name}"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_network" "app_port_group" {
+  name          = "${aci_tenant.terraform_tenant.name}|${aci_application_profile.anp.name}|${aci_application_epg.app_epg.name}"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_network" "db_port_group" {
+  name          = "${aci_tenant.terraform_tenant.name}|${aci_application_profile.anp.name}|${aci_application_epg.db_epg.name}"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_virtual_machine" "web_template" {
+  name          = "VM_EPG_WEB"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_virtual_machine" "app_template" {
+  name          = "VM_EPG_APP"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_virtual_machine" "db_template" {
+  name          = "VM_EPG_DB"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+resource "vsphere_virtual_machine" "web_vm" {
+  name             = "FRONTEND-1"
+  resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
+  datastore_id     = data.vsphere_datastore.datastore2.id
+  guest_id = data.vsphere_virtual_machine.web_template.guest_id
+  scsi_type = data.vsphere_virtual_machine.web_template.scsi_type
+  network_interface {
+    network_id   = data.vsphere_network.web_port_group.id
+  }
+disk {
+    label            = "disk0"
+    size             = "10"
+  }
+
+  clone {
+    template_uuid = data.vsphere_virtual_machine.web_template.id
+  }
+}
+
+resource "vsphere_virtual_machine" "app_vm" {
+  name             = "FRONTEND-1"
+  resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
+  datastore_id     = data.vsphere_datastore.datastore2.id
+  guest_id = data.vsphere_virtual_machine.app_template.guest_id
+  scsi_type = data.vsphere_virtual_machine.app_template.scsi_type
+  network_interface {
+    network_id   = data.vsphere_network.app_port_group.id
+  }
+
+disk {
+    label            = "disk0"
+    size             = "10"
+  }
+  clone {
+    template_uuid = data.vsphere_virtual_machine.app_template.id
+  }
+}
+
+resource "vsphere_virtual_machine" "db_vm" {
+  name             = "MONGODB-1"
+  resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
+  datastore_id     = data.vsphere_datastore.datastore1.id
+  guest_id = data.vsphere_virtual_machine.db_template.guest_id
+  scsi_type = data.vsphere_virtual_machine.db_template.scsi_type
+  network_interface {
+    network_id   = data.vsphere_network.db_port_group.id
+  }
+  disk {
+    label            = "disk0"
+    size             = "10"
+  }
+
+  clone {
+    template_uuid = data.vsphere_virtual_machine.db_template.id
+  }
+}
