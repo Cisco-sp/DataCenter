@@ -6,6 +6,10 @@ __pycache__/
 *.exe
 *_credentials
 versions.tf
+.vscode/
+*.tfstate
+*.tfstate.backup
+
 
 # C extensions
 *.so
