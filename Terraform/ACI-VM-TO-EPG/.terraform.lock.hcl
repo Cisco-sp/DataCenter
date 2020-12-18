@@ -6,6 +6,7 @@ provider "registry.terraform.io/ciscodevnet/aci" {
   constraints = "0.5.2"
   hashes = [
     "h1:X6TOEkt01n5WoQxjNzX/LRDaLnNg5McOM7Hrn+4ddf4=",
+    "h1:aSpgpWE1FgR2f0yTBKdS5A3tLoI4FNzlhK1fmWnADt4=",
     "zh:06160f62b411d205192d3ebfd7bcd2551b287adfd3fa868a29a0cc402f3dcf8f",
     "zh:178fc62e3ada2bc6b0d63d649f1cd956afa05144d7e96ebc9b7827c994647a23",
     "zh:19f8bc75e726539a4d147f45826747322b6e07b1348013bd0e0a8c679ff284c8",
@@ -52,6 +53,7 @@ provider "registry.terraform.io/ciscodevnet/mso" {
 provider "registry.terraform.io/hashicorp/vsphere" {
   version = "1.24.3"
   hashes = [
+    "h1:jsbMsGNX6WFGfmmlB/mC6uLLRXIyRSOd846SvVFFfSY=",
     "h1:tmVOVBdsBWDIsPdIUgYguaA1dKAlUOKrnnmzGaMNAr4=",
     "zh:3b31455ca5a5c4ae7b65f1f4a51d651988d42862b9d4e078eb6fd5b238f98176",
     "zh:4935754d72299ecfd7081517f496274dee34fb021996266f1f1cc9a5c6b1129d",
