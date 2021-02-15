@@ -9,8 +9,9 @@ versions.tf
 .vscode/
 *.tfstate
 *.tfstate.backup
-
-
+*.auto.tfvars
+*.tfvars
+credentials
 # C extensions
 *.so
 
