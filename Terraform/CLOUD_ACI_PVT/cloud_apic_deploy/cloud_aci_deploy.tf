@@ -1,44 +1,35 @@
-provider aws {
-    region = var.aws_region
-    shared_credentials_file = var.aws_credentials
-    profile = var.aws_credentials_profile
-}
 
-/*Cria a chave publica e a privada no diretorio onde o Terraform está rodando.*/
 resource "null_resource" "public_private_key" {
     provisioner "local-exec" {
-        command = "ssh-keygen -f ${path.module}/credentials/${var.cloudapic_ssh_key}_terraform -m pem -N ''"
+        command = "ssh-keygen -f ${path.root}/credentials/${var.cloudapic_ssh_key}_terraform -m pem -N ''"
         }
-    /*Remove a chave privada quando fizermos terraform destroy*/
+    
     provisioner "local-exec" {
         when = destroy
-        command = "rm ${path.module}/credentials/*_terraform"
+        command = "rm ${path.root}/credentials/*_terraform"
     }
-    /*Remove a chave publica quando fizermos terraform destroy*/
+    
     provisioner "local-exec" {
         when = destroy
-        command = "rm ${path.module}/credentials/*_terraform.pub"
+        command = "rm ${path.root}/credentials/*_terraform.pub"
     }
 
 }
 
-/*Necessario pois não podemos usar a função file para ler a chave, funções não participam
-da dependencia do Terraform. Só serve para termos um objeto no terraform para podermos controlar a ordem das coisas*/
 data "local_file" "read_key" {
-    /*Depends_on para primeiro a chave ser criada.*/
+   
     depends_on = [null_resource.public_private_key]
-    filename = "${path.module}/credentials/${var.cloudapic_ssh_key}_terraform.pub"
+    filename = "${path.root}/credentials/${var.cloudapic_ssh_key}_terraform.pub"
 }
 
 data "local_file" "cloudapic_password" {
     filename = var.cloudapic_password
 }
 
-/*Passando a chave publica que criamos para a AWS.*/
+
 resource "aws_key_pair" "cloudapic_key" {
     key_name = var.cloudapic_ssh_key
-    /*Se usarmos a função file para ler o arquivo o terraform le antes de criarmos ela, pois funções não participam das
-    dependencias do terraform*/
+    
     public_key = data.local_file.read_key.content
 }
 
@@ -728,7 +719,4 @@ resource "aws_cloudformation_stack" "cloud_apic" {
 }
 
     STACK
-}
-output "cloud_apic_ip" {
-    value = aws_cloudformation_stack.cloud_apic.outputs
 }
