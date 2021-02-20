@@ -14,7 +14,8 @@ versions.tf
 credentials
 # C extensions
 *.so
-
+*.sh
+.terraform.lock.hcl
 # Distribution / packaging
 .Python
 build/
