@@ -1,7 +1,3 @@
-variable "cloudapic_password" {
-    type = string
-    description = "Path to the file with the password, it just need to be a plain text file with the password on it."
-}
 
 variable "cloudvrf_name" {
     type = string
@@ -40,6 +36,23 @@ variable "tenant_subnets" {
 
 variable "anp_name" {
     type = string
-    description = "Name of the ANP that will be created in Cloud APIC"
+    description = "The name of your ANP"
 }
 
+variable "ec2_ssh_key_name" {
+    type = string
+    description = "Name that will be used to create an SSH Key on AWS for your EC2s"
+  
+}
+
+variable "endpoint_sel_tag_epg1" {
+    type = string
+    description = "This tag will be used in your EC2 and in your EPG so that the Cloud APIC can put this EC2 in the right EPG."
+  
+}
+
+variable "endpoint_sel_tag_epg2" {
+    type = string
+    description = "This tag will be used in your EC2 and in your EPG so that the Cloud APIC can put this EC2 in the right EPG."
+  
+}

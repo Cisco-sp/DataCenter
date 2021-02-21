@@ -22,10 +22,6 @@ data "local_file" "read_key" {
     filename = "${path.root}/credentials/${var.cloudapic_ssh_key}_terraform.pub"
 }
 
-data "local_file" "cloudapic_password" {
-    filename = var.cloudapic_password
-}
-
 
 resource "aws_key_pair" "cloudapic_key" {
     key_name = var.cloudapic_ssh_key
@@ -122,7 +118,7 @@ resource "aws_cloudformation_stack" "cloud_apic" {
         },
         "pPassword": {
             "Description": "Admin Password for Cloud APIC",
-            "Default": "${data.local_file.cloudapic_password.content}",
+            "Default": "${var.CLOUD_APIC_PASSWORD}",
             "Type": "String",
             "NoEcho": "true",
             "AllowedPattern":"^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$",
@@ -130,7 +126,7 @@ resource "aws_cloudformation_stack" "cloud_apic" {
         },
         "pConfirmPassword": {
             "Description": "Re-Enter Admin Password for Cloud APIC",
-            "Default": "${data.local_file.cloudapic_password.content}",
+            "Default": "${var.CLOUD_APIC_PASSWORD}",
             "Type": "String",
             "NoEcho": "true",
             "AllowedPattern":"^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$",

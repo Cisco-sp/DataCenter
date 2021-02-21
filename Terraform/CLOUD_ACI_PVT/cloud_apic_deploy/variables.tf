@@ -25,9 +25,9 @@ variable "cloudapic_allowed_extnet" {
     description = "The CIDR that can access the Cloud APIC. Example: [0.0.0.0/0] to allow all the internet to access the Cloud APIC"
 }
 
-variable "cloudapic_password" {
+variable "CLOUD_APIC_PASSWORD" {
     type = string
-    description = "Path to the file with the password, it just need to be a plain text file with the password on it."
+    description = "You forgot to set the Cloud APIC password on credentials.sh, set it and run again. Command: . credentials.sh"
 }
 
 variable "cloudapic_ssh_key" {
