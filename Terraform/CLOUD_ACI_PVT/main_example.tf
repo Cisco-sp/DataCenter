@@ -8,13 +8,16 @@ module "cloud_apic" {
     cloudapic_instance_type  = "m5.2xlarge"
     cloudapic_allowed_extnet = "0.0.0.0/0"
     cloudapic_ssh_key = "cloudapic"
+    CLOUD_APIC_PASSWORD = var.CLOUD_APIC_PASSWORD
 }
 
 module "deploy_cloud_aci_tenant" {
-    depends_on = [ module.cloud_apic ]
     providers = {
         aws = aws.deploy_cloud_aci_tenant
     } 
+    TENANT_ACCOUNT_ID = var.TENANT_ACCOUNT_ID
+    TENANT_ACCOUNT_ACCESS_KEY = var.TENANT_ACCOUNT_ACCESS_KEY
+    TENANT_ACCOUNT_SECRET_KEY_ID = var.TENANT_ACCOUNT_SECRET_KEY_ID
     source = "./deploy_cloud_aci_tenant"
     cloudvrf_name= "PVT_Terraform-VRF"
     anp_name = "PVT_ANP"

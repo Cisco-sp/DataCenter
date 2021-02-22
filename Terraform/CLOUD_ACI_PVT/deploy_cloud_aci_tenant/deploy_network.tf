@@ -38,6 +38,7 @@ resource "aws_key_pair" "cloudapic_key" {
 
 resource "aws_instance" "ec2_epg1" {
     ami = "ami-03d315ad33b9d49c4"
+    subnet_id = data.aws_subnet.subnet_epg1.id
     key_name = var.ec2_ssh_key_name
     associate_public_ip_address = true
     instance_type = "t3.micro"
@@ -49,6 +50,7 @@ resource "aws_instance" "ec2_epg1" {
 resource "aws_instance" "ec2_epg2" {
     ami = "ami-03d315ad33b9d49c4"
     key_name = var.ec2_ssh_key_name
+    subnet_id = data.aws_subnet.subnet_epg2.id
     associate_public_ip_address = true
     instance_type = "t3.micro"
     tags = {
@@ -57,6 +59,21 @@ resource "aws_instance" "ec2_epg2" {
 }
 
 
+
+data "aws_subnet" "subnet_epg1" {
+    depends_on = [aci_cloud_subnet.tenant_subnets,aci_cloud_availability_zone.tenant_azs]
+  filter {
+    name   = "tag:Name"
+    values = ["subnet-[192.168.1.0/24]"]
+  }
+}
+
+data "aws_subnet" "subnet_epg2" {
+  filter {
+    name   = "tag:Name"
+    values = ["subnet-[192.168.2.0/24]"]
+  }
+}
 
 
 resource "aci_tenant" "cloud_tenant" {
