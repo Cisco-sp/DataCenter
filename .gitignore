@@ -16,6 +16,7 @@ credentials
 *.so
 *.sh
 .terraform.lock.hcl
+.terraform.tfstate.lock.info
 # Distribution / packaging
 .Python
 build/
@@ -146,3 +147,4 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+Terraform/CLOUD_ACI_PVT/.terraform.tfstate.lock.info

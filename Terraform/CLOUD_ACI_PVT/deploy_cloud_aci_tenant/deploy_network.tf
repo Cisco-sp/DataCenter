@@ -60,7 +60,7 @@ resource "aws_instance" "ec2_epg2" {
 
 resource "time_sleep" "wait_cloud_apic" {
    depends_on = [aci_cloud_subnet.tenant_subnets,aci_cloud_availability_zone.tenant_azs]
-    create_duration = "2m"
+    create_duration = "4m"
 }
 
 data "aws_subnet" "subnet_epg1" {
