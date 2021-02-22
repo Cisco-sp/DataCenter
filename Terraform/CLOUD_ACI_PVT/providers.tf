@@ -10,7 +10,7 @@ terraform {
 }
 
 provider aci {
-      url = "https://18.234.11.53"
+      url = "https://34.196.161.124"
       username = "admin"
       password = var.CLOUD_APIC_PASSWORD
 }

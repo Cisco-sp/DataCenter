@@ -3,7 +3,6 @@ resource "null_resource" "public_private_key" {
     provisioner "local-exec" {
         command = "ssh-keygen -f ${path.root}/credentials/${var.cloudapic_ssh_key}_terraform -m pem -N ''"
         }
-    
     provisioner "local-exec" {
         when = destroy
         command = "rm ${path.root}/credentials/*_terraform"
@@ -13,7 +12,6 @@ resource "null_resource" "public_private_key" {
         when = destroy
         command = "rm ${path.root}/credentials/*_terraform.pub"
     }
-
 }
 
 data "local_file" "read_key" {

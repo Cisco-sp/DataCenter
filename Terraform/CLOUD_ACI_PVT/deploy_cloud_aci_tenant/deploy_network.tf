@@ -9,17 +9,17 @@ terraform {
 
 resource "null_resource" "public_private_key" {
     provisioner "local-exec" {
-        command = "ssh-keygen -f ${path.root}/credentials/${var.ec2_ssh_key_name}_terraform -m pem -N ''"
+        command = "ssh-keygen -f ${path.root}/credentials/${var.ec2_ssh_key_name}_ec2 -m pem -N ''"
         }
     
     provisioner "local-exec" {
         when = destroy
-        command = "rm ${path.root}/credentials/*_terraform"
+        command = "rm ${path.root}/credentials/*_ec2"
     }
     
     provisioner "local-exec" {
         when = destroy
-        command = "rm ${path.root}/credentials/*_terraform.pub"
+        command = "rm ${path.root}/credentials/*_ec2.pub"
     }
 
 }
@@ -27,7 +27,7 @@ resource "null_resource" "public_private_key" {
 data "local_file" "read_key" {
    
     depends_on = [null_resource.public_private_key]
-    filename = "${path.root}/credentials/${var.ec2_ssh_key_name}_terraform.pub"
+    filename = "${path.root}/credentials/${var.ec2_ssh_key_name}_ec2.pub"
 }
 
 resource "aws_key_pair" "cloudapic_key" {
@@ -58,10 +58,13 @@ resource "aws_instance" "ec2_epg2" {
     }
 }
 
-
+resource "time_sleep" "wait_cloud_apic" {
+   depends_on = [aci_cloud_subnet.tenant_subnets,aci_cloud_availability_zone.tenant_azs]
+    create_duration = "2m"
+}
 
 data "aws_subnet" "subnet_epg1" {
-    depends_on = [aci_cloud_subnet.tenant_subnets,aci_cloud_availability_zone.tenant_azs]
+    depends_on = [time_sleep.wait_cloud_apic]
   filter {
     name   = "tag:Name"
     values = ["subnet-[192.168.1.0/24]"]
@@ -69,6 +72,7 @@ data "aws_subnet" "subnet_epg1" {
 }
 
 data "aws_subnet" "subnet_epg2" {
+      depends_on = [time_sleep.wait_cloud_apic]
   filter {
     name   = "tag:Name"
     values = ["subnet-[192.168.2.0/24]"]
