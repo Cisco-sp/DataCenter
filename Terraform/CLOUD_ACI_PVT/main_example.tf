@@ -46,3 +46,19 @@ module "deploy_cloud_aci_tenant" {
     endpoint_sel_tag_epg2 = "Backend"
 }
 
+output "ec2_epg1_public_ip" {
+    value = module.deploy_cloud_aci_tenant.public_ip_ec2_epg1
+}
+
+output "ec2_epg2_public_ip" {
+    value = module.deploy_cloud_aci_tenant.public_ip_ec2_epg2
+}
+
+output "ec2_epg1_private_ip" {
+    value = module.deploy_cloud_aci_tenant.private_ip_ec2_epg1
+}
+
+output "ec2_epg2_private_ip" {
+    value = module.deploy_cloud_aci_tenant.private_ip_ec2_epg2
+}
+
