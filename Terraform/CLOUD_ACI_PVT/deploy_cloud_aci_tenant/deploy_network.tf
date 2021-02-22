@@ -30,6 +30,12 @@ data "local_file" "read_key" {
     filename = "${path.root}/credentials/${var.ec2_ssh_key_name}_ec2.pub"
 }
 
+data "local_file" "read_private_key" {
+   
+    depends_on = [null_resource.public_private_key]
+    filename = "${path.root}/credentials/${var.ec2_ssh_key_name}_ec2"
+}
+
 resource "aws_key_pair" "cloudapic_key" {
     key_name = var.ec2_ssh_key_name
     
@@ -45,7 +51,25 @@ resource "aws_instance" "ec2_epg1" {
     tags = {
         Type = var.endpoint_sel_tag_epg1
     }
+    
+    provisioner "remote-exec" {
+
+        inline = [
+            "sudo apt-get install nginx -y",
+            "sudo service nginx start",
+            "sudo systemctl enable nginx"
+
+        ]
+        connection  {
+        type = "ssh"
+        port = 22
+        user = "ubuntu"
+        host = aws_instance.ec2_epg1.public_ip
+        private_key = data.local_file.read_private_key.content
+    }
+    }
 }
+
 
 resource "aws_instance" "ec2_epg2" {
     ami = "ami-03d315ad33b9d49c4"
