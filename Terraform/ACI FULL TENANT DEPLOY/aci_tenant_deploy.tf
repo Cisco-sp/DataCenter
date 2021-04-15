@@ -138,3 +138,15 @@ resource "aci_epg_to_contract" "db_to_app" {
 }
 
 
+output "bd_ip_web" {
+    value = aci_subnet.web_subnet.ip
+}
+
+output "bd_ip_app" {
+    value = aci_subnet.app_subnet.ip
+}
+
+output "bd_ip_db" {
+    value = aci_subnet.db_subnet.ip
+}
+

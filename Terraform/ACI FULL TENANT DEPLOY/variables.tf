@@ -1,9 +1,7 @@
-variable vmm_domain_name {
 
-}
 
 variable prefix_name {
-    default = "WEG_"
+    default = "HEPRADO_"
 
 }
 
