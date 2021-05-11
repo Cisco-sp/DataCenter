@@ -5,7 +5,7 @@ provider aci {
     insecure = "true"
 }
 
-resource aci_tenant "terraform_tenant" {
+resource "aci_tenant" "terraform_tenant" {
     name = "${var.prefix_name}Tenant"
 }
 
